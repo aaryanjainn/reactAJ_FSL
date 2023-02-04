@@ -11,6 +11,7 @@ function Index()
         <>       
             <DynamicRows link={requests.fetchNetflixOriginals} heading="Netflix Orignal"/>
             <DynamicRows link={requests.fetchActionMovies} heading="Horror"/>
+            {/* aaryan */}
         </>
     )
 }
