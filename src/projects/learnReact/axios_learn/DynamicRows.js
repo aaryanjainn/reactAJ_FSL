@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import axios from 'axios';
+import axios from './axios';
 import { useState } from 'react';
 
 
@@ -8,6 +8,7 @@ function DynamicRows(props)
 {   
     // Code to get data from api 
     const [storeVal, storeFunction] = useState([]);
+    // const [id,setId]=useState(null)
     useEffect(() =>
     {
         async function fetchData(){
@@ -17,29 +18,46 @@ function DynamicRows(props)
         fetchData()
     }, [])
     // ___________________________
+
+    function openTrailer(url)
+    {
+        window.location.href = url;
+        const result = axios.get(props.link)
+    }
+
+    async function getid(movieId)
+    {
+        const API_KEY = "c4e764b9bc20c607857c740abf0e9918";
+        let url=`http://api.themoviedb.org/3/movie/${movieId}/videos?api_key=${API_KEY}`;
+        const result =  await axios.get(url);
+        const youtubeKey = result.data.results[0].key;
+        // window.location.href = `https://www.youtube.com/watch?v=${youtubeKey}`;
+
+        // (".playTrailer").css("display","block");
+        document.getElementById("playTrailer").style.display = "block";
+        document.getElementById("playTrailerIframe").src= `https://www.youtube.com/embed/${youtubeKey}`;
+    }
+
+    
+
     return(
         <>
-            <div className='pt-3'>
+            <div className='row'>
                 <h4 className='text-white'>{props.heading}</h4>
-            </div>
-            <div className='containerSelf'>
-                {
-                    storeVal.map((elem, index) => 
+                <div className={(props.big === true) ? 'movieRow big' : 'movieRow'}>
                     {
-                        console.log(elem);
-                        return(
-                            <>
-                                <div className='imageBox border p-2'>
-                                    <div className='imgParent'>
-                                        <img src={"https://image.tmdb.org/t/p/original"+elem.poster_path} />
-                                    </div>
-                                    <h4 className='text-secondary'>{elem.original_name}</h4>  
-                                </div>
-                            </>
-                        )
-                    })
-                }
+                        storeVal.map((elem, index) => 
+                        {
+                            return(
+                                <>
+                                    <img src={"https://image.tmdb.org/t/p/original"+elem.poster_path} onClick={()=>getid(elem.id)} />   
+                                </>
+                            )
+                        })
+                    }
+                </div>
             </div>
+
         </>
     )
 }
